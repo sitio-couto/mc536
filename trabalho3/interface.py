@@ -7,11 +7,17 @@ def main():
 
     while(True):
         # Loop trough requests
-        # c.execute("INSERT INTO pessoa VALUES (00000000000,'Sitio','sitio@unicamp.br',NULL)")
-        conn.commit()
-        for i in c.execute("SELECT * FROM Pessoa"):
-            print(i)
-        break
+        request = input()
+        
+        # if first char in input isnt a number, read input as a sql query
+        if not request and not request[0].isdigit(): 
+            c.execute(request)
+            for i in c:
+                print(i)
+            print("============================")
+        # TODO: Create if-else for eache predefined operation
+        else:
+            break
 
     conn.close()
 
