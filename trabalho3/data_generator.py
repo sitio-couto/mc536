@@ -33,8 +33,8 @@ def gerar_combinacoes_questoes(listas,materia,pessoas):
     return [(' '.join(l),choice("ABCDEF"), materia, choice(pessoas)[0]) for l in list(product(*listas))]
 
 ### Geradores
-PEOPLE_NAMES = ['José','Joselito'] # precisamos de 20 nomes
-PEOPLE_SURNAMES = ['da Silva','Silva']  # e de 20 sobrenomes
+PEOPLE_NAMES = ['José','Maria'] # precisamos de 20 nomes
+PEOPLE_SURNAMES = ['Borges','Silva']  # e de 20 sobrenomes
 EMAIL_PROVIDERS = ['gmail','hotmail','yahoo','outlook']
 EMAIL_CONNECTORS = ['','.','-','_']
 
@@ -196,24 +196,99 @@ def gerar_provas(questoes,pessoas,pessoas_por_prova=3):
 
 
 escolas = gerar_instituicao_academica(10,True)
+
 faculdades = gerar_instituicao_academica(10,False)
+escolas_cpy = escolas[:]
 
 escolas.extend(faculdades)
 # print(escolas)
 
 pessoas = gerar_pessoas(4,faculdades)
-print(pessoas)
+# print(pessoas)
 
+'''
+Retorna tupla (materias, questoes)
+    materias = lista de tuplas (id,nome)
+    questoes = lista de tuplas (pergunta,resposta,id_materia,cpf_criador)
+    O id da questão deve ser considerado como o indice dela na lista
+'''
 materias,questoes = gerar_questoes_materia(pessoas)
 # print(materias)
 # print(questoes)
 
-provas,aborda,realiza,responde = gerar_provas(questoes,pessoas)
+'''
+Retorna tupla (provas,composta,realiza,responde)
+    provas é uma lista de (id, nome, nivel)
+    composta é uma lista de (id_prova,id_questão) - numero da questao é o index na lista
+    realiza é uma lista de (id_prova,cpf_realizador,inscricao)
+    responde é uma lista de (cpf_realizador,id_questao,resposta)
+'''
+provas,compoe,realiza,responde = gerar_provas(questoes,pessoas)
 # print(provas)
-# print(aborda)
+# print(compoe)
 # print(realiza)
 # print(responde)
 
+
+# Inserindo nas tabelas
+# InstituicaoAcademica
+print()
+for (a,b,c) in escolas:
+    print(f"INSERT INTO InstituicaoAcademica VALUES ({a},'{b}')")
+
+# Escola
+print()
+for (a,b,c) in escolas_cpy:
+    print(f"INSERT INTO Escola VALUES ({a},'{b}',{c})")
+
+# Universidade
+print()
+for (a,b,c) in faculdades:
+    print(f"INSERT INTO Universidade VALUES ({a},'{b}',{c})")
+
+# Pessoa
+print()
+for (a,b,c,d) in pessoas:
+    print(f"INSERT INTO Pessoas VALUES ({a},'{b}','{c}',{d})")
+
+# Questao
+print()
+for (i,x) in enumerate(questoes):
+    (a,b,_,c) = x
+    print(f"INSERT INTO Questao VALUES ({i},'{a}','{b}',{c})")
+
+# Materia
+# TODO CARLOS TROLOU VACA
+# print()
+# for (a,b) in materias:
+#     print(f"INSERT INTO Materia VALUES ({i},'{a}','{b}')")
+
+# Aborda
+print()
+for (i,x) in enumerate(questoes):
+    (_,_,a,_) = x
+    print(f"INSERT INTO Aborda VALUES ({i},{a})")
+
+# Prova
+print()
+for (a,b,c) in provas:
+    print(f"INSERT INTO Prova VALUES ({a},'{b}','{c}')")
+
+# Compoe
+print()
+for (i,x) in compoe:
+    (a,b) = x
+    print(f"INSERT INTO Prova VALUES ('{b}','{c}',{i})")
+
+# Realiza
+print()
+for (a,b,c) in realiza:
+    print(f"INSERT INTO Prova VALUES ({b},{a},{c})")
+
+# Responde
+print()
+for (a,b,c) in realiza:
+    print(f"INSERT INTO Prova VALUES ({a},{b},'{c}')")
 
 '''
 Pessoa - OK
