@@ -158,6 +158,12 @@ def repetido(cpf,lista,id_prova):
             return True
     return False
 
+def resposta_repetida(responde,realizador,id_questao):
+    for elem in responde:
+        if elem[0] == realizador and elem[1] == id_questao:
+            return True
+    return False
+
 '''
 Retorna tupla (provas,composta,realiza,responde)
     provas é uma lista de (id, nome, nivel)
@@ -184,14 +190,14 @@ def gerar_provas(questoes,pessoas,pessoas_por_prova=3):
             tema += 1
         questoes_escolhidas = []
         for _ in range(5):
-            index = randint(0,len(questoes)-1)
-            while (id_prova,index) in questoes_escolhidas or \
-                 questoes[index][2] not in TEMAS_TO_MATERIA[tema]:
-                index = randint(0,len(questoes)-1)
-            questoes_escolhidas.append((id_prova,index))
+            id_questao = randint(0,len(questoes)-1)
+            while (id_prova,id_questao) in questoes_escolhidas or \
+                 questoes[id_questao][2] not in TEMAS_TO_MATERIA[tema]:
+                id_questao = randint(0,len(questoes)-1)
+            questoes_escolhidas.append((id_prova,id_questao))
         composta.extend(questoes_escolhidas)
 
-        for _ in range(pessoas_por_prova-1):
+        for _ in range(pessoas_por_prova):
             realizador = choice(pessoas)[0]
             inscricao = randint(100,99999)
             while repetido(realizador,realiza,id_prova):
@@ -199,7 +205,8 @@ def gerar_provas(questoes,pessoas,pessoas_por_prova=3):
             realiza.append((id_prova,realizador,inscricao))
 
             for questao_ in questoes_escolhidas:
-                responde.append((realizador,questao_[1],choice("ABCDEF")))
+                if not resposta_repetida(responde,realizador,questao_[1]):
+                    responde.append((realizador,questao_[1],choice("ABCDEF")))
 
 
     return (provas,composta,realiza,responde)
