@@ -61,7 +61,7 @@ def gerar_pessoas(quantidade,cnpjs):
 
         pessoas.append((cpfs[-1],nomes[-1],emails[-1],cnpj))
     return pessoas
-    
+
 
 TIPO_INSTITUICAO_SUPERIOR = ['Faculdade','Universidade']
 TIPO_INSTITUICAO_ESCOLA = ['Escola','Colégio']
@@ -162,7 +162,7 @@ def gerar_provas(questoes,pessoas,pessoas_por_prova=3):
     composta = []
     realiza = []
     responde = []
-    
+
     listas = [TIPOS,ESCOPO,TEMAS,NIVEIS]
     todos_nomes = [' '.join(elem) for elem in list(product(*listas))]
 
@@ -202,7 +202,7 @@ escolas.extend(faculdades)
 # print(escolas)
 
 pessoas = gerar_pessoas(4,faculdades)
-# print(pessoas)
+print(pessoas)
 
 materias,questoes = gerar_questoes_materia(pessoas)
 # print(materias)
@@ -212,7 +212,7 @@ provas,aborda,realiza,responde = gerar_provas(questoes,pessoas)
 # print(provas)
 # print(aborda)
 # print(realiza)
-print(responde)
+# print(responde)
 
 
 '''
