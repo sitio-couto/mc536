@@ -206,23 +206,23 @@ escolas.extend(faculdades)
 pessoas = gerar_pessoas(4,faculdades)
 # print(pessoas)
 
-'''
-Retorna tupla (materias, questoes)
-    materias = lista de tuplas (id,nome)
-    questoes = lista de tuplas (pergunta,resposta,id_materia,cpf_criador)
-    O id da questão deve ser considerado como o indice dela na lista
-'''
+# '''
+# Retorna tupla (materias, questoes)
+#     materias = lista de tuplas (id,nome)
+#     questoes = lista de tuplas (pergunta,resposta,id_materia,cpf_criador)
+#     O id da questão deve ser considerado como o indice dela na lista
+# '''
 materias,questoes = gerar_questoes_materia(pessoas)
 # print(materias)
 # print(questoes)
 
-'''
-Retorna tupla (provas,composta,realiza,responde)
-    provas é uma lista de (id, nome, nivel)
-    composta é uma lista de (id_prova,id_questão) - numero da questao é o index na lista
-    realiza é uma lista de (id_prova,cpf_realizador,inscricao)
-    responde é uma lista de (cpf_realizador,id_questao,resposta)
-'''
+# '''
+# Retorna tupla (provas,composta,realiza,responde)
+#     provas é uma lista de (id, nome, nivel)
+#     compoe é uma lista de (id_prova,id_questão) - numero da questao é o index na lista
+#     realiza é uma lista de (id_prova,cpf_realizador,inscricao)
+#     responde é uma lista de (cpf_realizador,id_questao,resposta)
+# '''
 provas,compoe,realiza,responde = gerar_provas(questoes,pessoas)
 # print(provas)
 # print(compoe)
@@ -233,29 +233,29 @@ provas,compoe,realiza,responde = gerar_provas(questoes,pessoas)
 # Inserindo nas tabelas
 # InstituicaoAcademica
 print()
-for (a,b,c) in escolas:
-    print(f"INSERT INTO InstituicaoAcademica VALUES ({a},'{b}')")
+for (cnpj,nome,rank) in escolas:
+    print(f"INSERT INTO InstituicaoAcademica VALUES ({cnpj},'{nome}')")
 
 # Escola
 print()
-for (a,b,c) in escolas_cpy:
-    print(f"INSERT INTO Escola VALUES ({a},'{b}',{c})")
+for (cnpj,nome,rank) in escolas_cpy:
+    print(f"INSERT INTO Escola VALUES ({cnpj},'{nome}',{rank})")
 
 # Universidade
 print()
-for (a,b,c) in faculdades:
-    print(f"INSERT INTO Universidade VALUES ({a},'{b}',{c})")
+for (cnpj,nome,rank) in faculdades:
+    print(f"INSERT INTO Universidade VALUES ({cnpj},'{nome}',{rank})")
 
 # Pessoa
 print()
-for (a,b,c,d) in pessoas:
-    print(f"INSERT INTO Pessoas VALUES ({a},'{b}','{c}',{d})")
+for (cpf,nome,email,cnpj) in pessoas:
+    print(f"INSERT INTO Pessoas VALUES ({cpf},'{nome}','{email}',{cnpj})")
 
 # Questao
 print()
-for (i,x) in enumerate(questoes):
-    (a,b,_,c) = x
-    print(f"INSERT INTO Questao VALUES ({i},'{a}','{b}',{c})")
+for (id,x) in enumerate(questoes):
+    (pergunta,resposta,_,cpf_criador) = x
+    print(f"INSERT INTO Questao VALUES ({id},'{pergunta}','{resposta}',{cpf_criador})")
 
 # Materia
 # TODO CARLOS TROLOU VACA
@@ -263,32 +263,32 @@ for (i,x) in enumerate(questoes):
 # for (a,b) in materias:
 #     print(f"INSERT INTO Materia VALUES ({i},'{a}','{b}')")
 
-# Aborda
-print()
-for (i,x) in enumerate(questoes):
-    (_,_,a,_) = x
-    print(f"INSERT INTO Aborda VALUES ({i},{a})")
-
 # Prova
 print()
-for (a,b,c) in provas:
-    print(f"INSERT INTO Prova VALUES ({a},'{b}','{c}')")
-
-# Compoe
-print()
-for (i,x) in compoe:
-    (a,b) = x
-    print(f"INSERT INTO Prova VALUES ('{b}','{c}',{i})")
+for (id, nome, nivel) in provas:
+    print(f"INSERT INTO Prova VALUES ({id},'{nome}','{nivel}')")
 
 # Realiza
 print()
-for (a,b,c) in realiza:
-    print(f"INSERT INTO Prova VALUES ({b},{a},{c})")
+for (id_prova,cpf_realizador,inscricao) in realiza:
+    print(f"INSERT INTO Realiza VALUES ({id_prova},{cpf_realizador},{inscricao})")
 
 # Responde
 print()
-for (a,b,c) in realiza:
-    print(f"INSERT INTO Prova VALUES ({a},{b},'{c}')")
+for (cpf_realizador,id_questao,resposta) in responde:
+    print(f"INSERT INTO Responde VALUES ({cpf_realizador},{id_questao},'{resposta}')")
+
+# Compoe
+print()
+for (n_questao, x) in enumerate(compoe):
+    (id_prova,id_questão) = x
+    print(f"INSERT INTO Compoe VALUES ('{id_prova}','{id_questão}',{n_questao})")
+
+# Aborda
+print()
+for (id_questao,x) in enumerate(questoes):
+    (_,_,id_materia,_) = x
+    print(f"INSERT INTO Aborda VALUES ({id_questao},{id_materia})")
 
 '''
 Pessoa - OK
