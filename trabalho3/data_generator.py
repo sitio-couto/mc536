@@ -124,7 +124,8 @@ Retorna tupla (materias, questoes)
     O id da questão deve ser considerado como o indice dela na lista
 '''
 def gerar_questoes_materia(pessoas):
-    materias = [(i,MATERIAS[i]) for i in range(len(MATERIAS))]
+    areas = ["Humanas","Exatas","Humanas","Humanas","Exatas","Exatas"]
+    materias = [(i,MATERIAS[i],areas[i]) for i in range(len(MATERIAS))]
     questoes = []
 
     questoes.extend(gerar_combinacoes_questoes([P_HISTORIA1,P_HISTORIA2],0,pessoas))
@@ -208,7 +209,7 @@ pessoas = gerar_pessoas(4,faculdades)
 
 # '''
 # Retorna tupla (materias, questoes)
-#     materias = lista de tuplas (id,nome)
+#     materias = lista de tuplas (id,nome,area)
 #     questoes = lista de tuplas (pergunta,resposta,id_materia,cpf_criador)
 #     O id da questão deve ser considerado como o indice dela na lista
 # '''
@@ -258,10 +259,10 @@ for (id,x) in enumerate(questoes):
     print(f"INSERT INTO Questao VALUES ({id},'{pergunta}','{resposta}',{cpf_criador})")
 
 # Materia
-# TODO CARLOS TROLOU VACA
-# print()
-# for (a,b) in materias:
-#     print(f"INSERT INTO Materia VALUES ({i},'{a}','{b}')")
+# TODO Tem id e nome, mas falta a area de conhecimento
+print()
+for (id,nome,area) in materias:
+    print(f"INSERT INTO Materia VALUES ({id},'{nome}','{area}')")
 
 # Prova
 print()
