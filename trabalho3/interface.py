@@ -11,14 +11,15 @@ def main():
 
         # if first char in input isnt a number, read input as a sql query
         if (request.lower() == 'exit'):
+            conn.commit()
             conn.close()
             break
         elif request and (not request[0].isdigit()):
+            print(request)
             c.execute(request)
             for i in c:
                 print(i)
-            print("============================")
-            conn.commit()
+            # print("============================")
         # TODO: Create if-else for eache predefined operation
 
 def initialize_database(c):

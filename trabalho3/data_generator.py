@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from random import randint, choice
 from itertools import product
 
@@ -33,8 +34,8 @@ def gerar_combinacoes_questoes(listas,materia,pessoas):
     return [(' '.join(l),choice("ABCDEF"), materia, choice(pessoas)[0]) for l in list(product(*listas))]
 
 ### Geradores
-PEOPLE_NAMES = ['José','Maria'] # precisamos de 20 nomes
-PEOPLE_SURNAMES = ['Borges','Silva']  # e de 20 sobrenomes
+PEOPLE_NAMES = ['José','Joselito','Joana','Josefina','Raimundo','Raimunda'] # precisamos de 20 nomes
+PEOPLE_SURNAMES = ['da Silva','Silva','Souza','Couto','do Nascimento']  # e de 20 sobrenomes
 EMAIL_PROVIDERS = ['gmail','hotmail','yahoo','outlook']
 EMAIL_CONNECTORS = ['','.','-','_']
 
@@ -61,7 +62,7 @@ def gerar_pessoas(quantidade,cnpjs):
 
         pessoas.append((cpfs[-1],nomes[-1],emails[-1],cnpj))
     return pessoas
-
+    
 
 TIPO_INSTITUICAO_SUPERIOR = ['Faculdade','Universidade']
 TIPO_INSTITUICAO_ESCOLA = ['Escola','Colégio']
@@ -151,6 +152,12 @@ NIVEIS = ['Básica','Avançada']
 
 # temos 24 possiveis provas
 
+def repetido(cpf,lista,id_prova):
+    for elem in lista:
+        if elem[0] == id_prova and elem[1] == cpf:
+            return True
+    return False
+
 '''
 Retorna tupla (provas,composta,realiza,responde)
     provas é uma lista de (id, nome, nivel)
@@ -163,7 +170,7 @@ def gerar_provas(questoes,pessoas,pessoas_por_prova=3):
     composta = []
     realiza = []
     responde = []
-
+    
     listas = [TIPOS,ESCOPO,TEMAS,NIVEIS]
     todos_nomes = [' '.join(elem) for elem in list(product(*listas))]
 
@@ -187,6 +194,8 @@ def gerar_provas(questoes,pessoas,pessoas_por_prova=3):
         for _ in range(pessoas_por_prova-1):
             realizador = choice(pessoas)[0]
             inscricao = randint(100,99999)
+            while repetido(realizador,realiza,id_prova):
+                realizador = choice(pessoas)[0]
             realiza.append((id_prova,realizador,inscricao))
 
             for questao_ in questoes_escolhidas:
@@ -197,7 +206,6 @@ def gerar_provas(questoes,pessoas,pessoas_por_prova=3):
 
 
 escolas = gerar_instituicao_academica(10,True)
-
 faculdades = gerar_instituicao_academica(10,False)
 escolas_cpy = escolas[:]
 
@@ -207,31 +215,17 @@ escolas.extend(faculdades)
 pessoas = gerar_pessoas(4,faculdades)
 # print(pessoas)
 
-# '''
-# Retorna tupla (materias, questoes)
-#     materias = lista de tuplas (id,nome,area)
-#     questoes = lista de tuplas (pergunta,resposta,id_materia,cpf_criador)
-#     O id da questão deve ser considerado como o indice dela na lista
-# '''
 materias,questoes = gerar_questoes_materia(pessoas)
 # print(materias)
 # print(questoes)
 
-# '''
-# Retorna tupla (provas,composta,realiza,responde)
-#     provas é uma lista de (id, nome, nivel)
-#     compoe é uma lista de (id_prova,id_questão) - numero da questao é o index na lista
-#     realiza é uma lista de (id_prova,cpf_realizador,inscricao)
-#     responde é uma lista de (cpf_realizador,id_questao,resposta)
-# '''
 provas,compoe,realiza,responde = gerar_provas(questoes,pessoas)
 # print(provas)
 # print(compoe)
 # print(realiza)
 # print(responde)
 
-
-# Inserindo nas tabelas
+#### POPULANDO BANCO DE DADOS ###############
 # InstituicaoAcademica
 print()
 for (cnpj,nome,rank) in escolas:
@@ -250,7 +244,7 @@ for (cnpj,nome,rank) in faculdades:
 # Pessoa
 print()
 for (cpf,nome,email,cnpj) in pessoas:
-    print(f"INSERT INTO Pessoas VALUES ({cpf},'{nome}','{email}',{cnpj})")
+    print(f"INSERT INTO Pessoa VALUES ({cpf},'{nome}','{email}',{cnpj})")
 
 # Questao
 print()
@@ -290,6 +284,8 @@ print()
 for (id_questao,x) in enumerate(questoes):
     (_,_,id_materia,_) = x
     print(f"INSERT INTO Aborda VALUES ({id_questao},{id_materia})")
+
+print("\nexit")
 
 '''
 Pessoa - OK
