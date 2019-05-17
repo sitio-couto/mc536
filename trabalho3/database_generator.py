@@ -212,98 +212,92 @@ def gerar_provas(questoes,pessoas,pessoas_por_prova=3):
     return (provas,composta,realiza,responde)
 
 
-escolas = gerar_instituicao_academica(10,True)
-faculdades = gerar_instituicao_academica(10,False)
-escolas_cpy = escolas[:]
-
-escolas.extend(faculdades)
-# print(escolas)
-
-pessoas = gerar_pessoas(4,faculdades)
-# print(pessoas)
-
-materias,questoes = gerar_questoes_materia(pessoas)
-# print(materias)
-# print(questoes)
-
-provas,compoe,realiza,responde = gerar_provas(questoes,pessoas)
-# print(provas)
-# print(compoe)
-# print(realiza)
-# print(responde)
-
-#### POPULANDO BANCO DE DADOS ###############
-# InstituicaoAcademica
-print()
-for (cnpj,nome,rank) in escolas:
-    print(f"INSERT INTO InstituicaoAcademica VALUES ({cnpj},'{nome}')")
-
-# Escola
-print()
-for (cnpj,nome,rank) in escolas_cpy:
-    print(f"INSERT INTO Escola VALUES ({cnpj},'{nome}',{rank})")
-
-# Universidade
-print()
-for (cnpj,nome,rank) in faculdades:
-    print(f"INSERT INTO Universidade VALUES ({cnpj},'{nome}',{rank})")
-
-# Pessoa
-print()
-for (cpf,nome,email,cnpj) in pessoas:
-    print(f"INSERT INTO Pessoa VALUES ({cpf},'{nome}','{email}',{cnpj})")
-
-# Questao
-print()
-for (id,x) in enumerate(questoes):
-    (pergunta,resposta,_,cpf_criador) = x
-    print(f"INSERT INTO Questao VALUES ({id},'{pergunta}','{resposta}',{cpf_criador})")
-
-# Materia
-# TODO Tem id e nome, mas falta a area de conhecimento
-print()
-for (id,nome,area) in materias:
-    print(f"INSERT INTO Materia VALUES ({id},'{nome}','{area}')")
-
-# Prova
-print()
-for (id, nome, nivel) in provas:
-    print(f"INSERT INTO Prova VALUES ({id},'{nome}','{nivel}')")
-
-# Realiza
-print()
-for (id_prova,cpf_realizador,inscricao) in realiza:
-    print(f"INSERT INTO Realiza VALUES ({id_prova},{cpf_realizador},{inscricao})")
-
-# Responde
-print()
-for (cpf_realizador,id_questao,resposta) in responde:
-    print(f"INSERT INTO Responde VALUES ({cpf_realizador},{id_questao},'{resposta}')")
-
-# Compoe
-print()
-for (n_questao, x) in enumerate(compoe):
-    (id_prova,id_questão) = x
-    print(f"INSERT INTO Compoe VALUES ('{id_prova}','{id_questão}',{n_questao})")
-
-# Aborda
-print()
-for (id_questao,x) in enumerate(questoes):
-    (_,_,id_materia,_) = x
-    print(f"INSERT INTO Aborda VALUES ({id_questao},{id_materia})")
-
-print("\nexit")
-
+''' DEF: generate_database(void) : StringArray
+    Função a ser chamada quando for necessário inicializar o banco de dados.
+    RETORNO: setup_commands[] 
+            Lista de strings contendo comandos em sql de criação de tabelas
+            e inserção de dados.
 '''
-Pessoa - OK
-InstituicaoAcademica - OK
-Escola - OK
-Universidade - OK
-Questao - OK
-Materia - OK
-Aborda - OK
-Prova - OK
-Compoe - OK
-Realiza - OK
-Responde - OK
-'''
+def generate_database():
+
+    #### GERANDO COMBINAÇÕES DE DADOS ###########
+    escolas = gerar_instituicao_academica(10,True)
+    faculdades = gerar_instituicao_academica(10,False)
+    escolas_cpy = escolas[:]
+
+    escolas.extend(faculdades)
+
+    pessoas = gerar_pessoas(4,faculdades)
+
+    materias,questoes = gerar_questoes_materia(pessoas)
+
+    provas,compoe,realiza,responde = gerar_provas(questoes,pessoas)
+
+    #### Vetor onde serão inseridos os comandos sql para inicialização do BD
+    setup_commands = []
+
+    #### INICIALIZANDO TABELAS ##################
+    setup_commands.extend([
+    'CREATE TABLE Pessoa (cpf INT NOT NULL, nome VARCHAR(30) NOT NULL, email VARCHAR(30) NOT NULL, cnpj INT, PRIMARY KEY (cpf), FOREIGN KEY (cnpj) REFERENCES InstituicaoAcademica(cnpj));',
+    'CREATE TABLE InstituicaoAcademica (cnpj INT NOT NULL, nome VARCHAR(30) NOT NULL, PRIMARY KEY (cnpj));',
+    'CREATE TABLE Escola (cnpj INT NOT NULL, nome VARCHAR(30) NOT NULL, posicao_enem INT, PRIMARY KEY (cnpj), FOREIGN KEY (cnpj) REFERENCES InstituicaoAcademica(cnpj));',
+    'CREATE TABLE Universidade (cnpj INT NOT NULL, nome VARCHAR(30) NOT NULL, ranking INT, PRIMARY KEY (cnpj), FOREIGN KEY (cnpj) REFERENCES InstituicaoAcademica(cnpj));',
+    'CREATE TABLE Questao (id INT NOT NULL, enunciado VARCHAR(1000) NOT NULL, gabarito VARCHAR(1000) NOT NULL, cpf INT, PRIMARY KEY (id), FOREIGN KEY (cpf) REFERENCES Pessoa(cpf));',
+    'CREATE TABLE Materia (id INT NOT NULL, nome VARCHAR(30), area_conhecimento VARCHAR(30), PRIMARY KEY (id));',
+    'CREATE TABLE Prova (id INT NOT NULL, nome VARCHAR(30), nivel VARCHAR(30), PRIMARY KEY (id));',
+    'CREATE TABLE Realiza (cpf INT NOT NULL, id_prova INT NOT NULL, n_inscricao INT, PRIMARY KEY (cpf, id_prova), FOREIGN KEY (cpf) REFERENCES Pessoa(cpf), FOREIGN KEY (id_prova) REFERENCES Prova(id));',
+    'CREATE TABLE Responde (cpf INT NOT NULL, id_questao INT NOT NULL, resposta VARCHAR(1000), PRIMARY KEY (cpf, id_questao), FOREIGN KEY (cpf) REFERENCES Pessoa(cpf), FOREIGN KEY (id_questao) REFERENCES Questao(id));',
+    'CREATE TABLE Compoe (id_prova INT NOT NULL, id_questao INT NOT NULL, n_questao INT, PRIMARY KEY (id_prova, id_questao), FOREIGN KEY (id_prova) REFERENCES Prova(id), FOREIGN KEY (id_questao) REFERENCES Questao(id));',
+    'CREATE TABLE Aborda (id_questao INT NOT NULL, id_materia INT NOT NULL, PRIMARY KEY (id_questao, id_materia), FOREIGN KEY (id_questao) REFERENCES Questao(id), FOREIGN KEY (id_materia) REFERENCES Materia(id));'
+    ])
+
+
+    #### POPULANDO BANCO DE DADOS ###############
+    # InstituicaoAcademica
+    for (cnpj,nome,rank) in escolas:
+        setup_commands.append(f"INSERT INTO InstituicaoAcademica VALUES ({cnpj},'{nome}');")
+
+    # Escola
+    for (cnpj,nome,rank) in escolas_cpy:
+        setup_commands.append(f"INSERT INTO Escola VALUES ({cnpj},'{nome}',{rank});")
+
+    # Universidade
+    for (cnpj,nome,rank) in faculdades:
+        setup_commands.append(f"INSERT INTO Universidade VALUES ({cnpj},'{nome}',{rank});")
+
+    # Pessoa
+    for (cpf,nome,email,cnpj) in pessoas:
+        setup_commands.append(f"INSERT INTO Pessoa VALUES ({cpf},'{nome}','{email}',{cnpj});")
+
+    # Questao
+    for (id,x) in enumerate(questoes):
+        (pergunta,resposta,_,cpf_criador) = x
+        setup_commands.append(f"INSERT INTO Questao VALUES ({id},'{pergunta}','{resposta}',{cpf_criador});")
+
+    # Materia
+    for (id,nome,area) in materias:
+        setup_commands.append(f"INSERT INTO Materia VALUES ({id},'{nome}','{area}');")
+
+    # Prova
+    for (id, nome, nivel) in provas:
+        setup_commands.append(f"INSERT INTO Prova VALUES ({id},'{nome}','{nivel}');")
+
+    # Realiza
+    for (id_prova,cpf_realizador,inscricao) in realiza:
+        setup_commands.append(f"INSERT INTO Realiza VALUES ({id_prova},{cpf_realizador},{inscricao});")
+
+    # Responde
+    for (cpf_realizador,id_questao,resposta) in responde:
+        setup_commands.append(f"INSERT INTO Responde VALUES ({cpf_realizador},{id_questao},'{resposta}');")
+
+    # Compoe
+    for (n_questao, x) in enumerate(compoe):
+        (id_prova,id_questão) = x
+        setup_commands.append(f"INSERT INTO Compoe VALUES ('{id_prova}','{id_questão}',{n_questao});")
+
+    # Aborda
+    for (id_questao,x) in enumerate(questoes):
+        (_,_,id_materia,_) = x
+        setup_commands.append(f"INSERT INTO Aborda VALUES ({id_questao},{id_materia});")
+
+    return setup_commands
