@@ -34,8 +34,8 @@ ON r.id_prova = 16 AND p.cpf = r.cpf;
 -- FROM Pessoa AS p INNER JOIN Realiza AS r
 -- ON r.id_prova = 16 AND p.cpf = r.cpf;
 
--- OP5 - Lista todas as provas de dificuldade Avançada ou superior
+-- OP5 - Lista todas as provas de dificuldade Avançada
 SELECT *
 FROM Prova
-WHERE Prova.nivel <= 'Avançada';
+WHERE Prova.nivel = 'Avançada';
 

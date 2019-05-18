@@ -77,14 +77,12 @@ def main():
                                     )
             # Get all testes from a certain difficulty {param} and above
             elif option=='5':
-                # TODO: Since the difficulty is given in strings and there are only two
-                # of them (advanced and basic), i considered that the difficulty is related
-                # to the alphabetical order of the strings, meaning: Advanced > Basic -> A < B 
-                # So if a string comes alphabetically before other, it implies its also
-                # more difficult. (Could change to numbers)
+                # TODO: The option should list all difficulties equal or 
+                # superior to PARAM. Since the difficulty is given in strgins,
+                # i changed the query to select onlt difficulties from PARAM level.
                 result = c.execute(f"SELECT * \
             	                    FROM Prova \
-                                    WHERE Prova.nivel <= '{param}';"
+                                    WHERE Prova.nivel = '{param}';"
                                     )
             # In case the number is no any of the options, labels as invalid
             else:
