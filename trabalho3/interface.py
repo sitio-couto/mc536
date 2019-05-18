@@ -12,6 +12,7 @@ def main():
     # Connect to database and retrieve cursor
     conn = sql.connect('database.db')
     c = conn.cursor()
+    show_options()
 
     # Loop trough requests until exit case
     while(True):
@@ -114,6 +115,18 @@ def decorate_table(result):
     print("---------------------------------------------")
     return tabulate(values,headers=header,tablefmt=looks,stralign=align,numalign=align)
 
+
+def show_options():
+    options = [ "1 - Listar Alunos(nome, cpf, email) de uma instituição?",
+                "2 - Listar Id das questões de uma matéria?",
+                "3 - Listar questões de uma prova?",
+                "4 - Listar os CPFs dos candidatos que fizeram uma prova e pertencem a uma Instituição?",
+                "5 - Listar as provas que pertencem á algum nível?",
+                "Escolhar uma das opçoes acima ou digite uma query em SQL.",
+                "---------------------------------------------"
+              ]
+    for i in options : print(i)
+    return
 
 ### EXECUTION CALL ###
 main()
