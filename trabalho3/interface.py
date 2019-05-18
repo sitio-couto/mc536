@@ -3,6 +3,7 @@ from tabulate import tabulate
 import sqlite3 as sql
 
 def main():
+    # Connect to database and retrieve cursor
     conn = sql.connect('database.db')
     c = conn.cursor()
 
@@ -29,11 +30,7 @@ def main():
         elif request and (not request[0].isdigit()):
             result = c.execute(request)
             # Print resulting table on terminal
-            print("---------------------------------------------")
-            values = list(result)
-            header = list(map(lambda x: x[0], list(c.description)))
-            print(tabulate(values,headers=header,tablefmt="fancy_grid"))
-        # TODO: Create if-else for eache predefined operation
+            print(decorate_table(result))
         else:
             option = request[0]
             param  = request[2:]
@@ -89,14 +86,28 @@ def main():
                 continue
 
             # Print resulting table in the terminal
-            print("---------------------------------------------")
-            values = list(result)
-            header = list(map(lambda x: x[0], list(c.description)))
-            print(tabulate(values,headers=header,tablefmt="fancy_grid"))
+            print(decorate_table(result))
 
         # Print double line to split queries requests
         print("=============================================")
 
-### EXECUTION CALL ###
+# FUNCTION:
+#   decorate_table - formats queries result into table
+# PARAMETERS: 
+#   result - Iterable object returned by a sqlite3 query
+# RETUNRS: 
+#   table format compatible with tabulate library
+def decorate_table(result):
+    # Formatting values 
+    values = list(result)
+    header = list(map(lambda x: x[0].upper(), list(result.description)))
+    # Setting table options
+    looks="fancy_grid"
+    align="center"
+    # Print single line spliting query and table
+    print("---------------------------------------------")
+    return tabulate(values,headers=header,tablefmt=looks,stralign=align,numalign=align)
 
+
+### EXECUTION CALL ###
 main()
