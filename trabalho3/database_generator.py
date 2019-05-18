@@ -284,7 +284,7 @@ def generate_database():
 
     # Realiza
     for (id_prova,cpf_realizador,inscricao) in realiza:
-        setup_commands.append(f"INSERT INTO Realiza VALUES ({id_prova},{cpf_realizador},{inscricao});")
+        setup_commands.append(f"INSERT INTO Realiza VALUES ({cpf_realizador},{id_prova},{inscricao});")
 
     # Responde
     for (cpf_realizador,id_questao,resposta) in responde:

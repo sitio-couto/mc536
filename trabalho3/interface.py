@@ -38,7 +38,7 @@ def main():
                 result = c.execute(f"SELECT p.cpf, p.nome, p.email \
             	                    FROM InstituicaoAcademica AS ia \
                                     INNER JOIN Pessoa AS p \
-                                    ON ia.cnpj = p.cnpj
+                                    ON ia.cnpj = p.cnpj \
                                     WHERE ia.nome = '{param}';"
                                     )
             # Get (id) of every question from the subject with id=={param}
@@ -52,22 +52,19 @@ def main():
                 result = c.execute(f"SELECT Questao.enunciado \
             	                    FROM Questao INNER JOIN Compoe \
                                     ON Questao.id = Compoe.id_questao \
-                                    WHERE c.id_prova = {param};"
+                                    WHERE Compoe.id_prova = {param};"
                                     )
             # Lists (cpf) from all candidates whom took a test {param[0]} and is part of a certain institution {param[1]}
             elif option=='4':
                 param = param.split(' ',1)
                 param[1] = param[1].strip()
-
-                result = c.execute(f"SELECT Pessoa.cpf \
-            	                    FROM Pessoa \
+                print(param)
+                result = c.execute(f"SELECT p.cpf \
+            	                    FROM Pessoa AS p \
                                     INNER JOIN InstituicaoAcademica AS ia \
-                                    ON ia.nome = {param[1]} AND ia.cnpj = Pessoa.cnpj \
-                                    INNER JOIN Prova AS p \
-                                    ON p.id = c.id_prova \
+                                    ON ia.nome = '{param[1]}' AND ia.cnpj = p.cnpj \
                                     INNER JOIN Realiza AS r \
-                                    ON p.id = {param[0]} AND p.id = r.id_prova \
-                                    WHERE ia.id_prova = {param};"
+                                    ON r.id_prova = {param[0]} AND p.cpf = r.cpf;"
                                     )
             # In case the number is no any of the options, labels as invalid
             else:
