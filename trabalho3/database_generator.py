@@ -34,8 +34,9 @@ def gerar_combinacoes_questoes(listas,materia,pessoas):
     return [(' '.join(l),choice("ABCDEF"), materia, choice(pessoas)[0]) for l in list(product(*listas))]
 
 ### Geradores
-PEOPLE_NAMES = ['José','Joselito','Joana','Josefina','Raimundo','Raimunda'] # precisamos de 20 nomes
-PEOPLE_SURNAMES = ['da Silva','Silva','Souza','Couto','do Nascimento']  # e de 20 sobrenomes
+PEOPLE_NAMES = ['José','Joselito','Joana','Josefina','Raimundo','Raimunda','Picasso','Donatello','Michelangelo','Marco'
+                ,'Reiner','Ricardo','Carmel','Shimbalaie','Torbjorn','Angela'] # precisamos de 20 nomes
+PEOPLE_SURNAMES = ['da Silva','Silva','Souza','Couto','do Nascimento','Tavares','Steinberg','Camarões','de Castro','Olaf']  # e de 20 sobrenomes
 EMAIL_PROVIDERS = ['gmail','hotmail','yahoo','outlook']
 EMAIL_CONNECTORS = ['','.','-','_']
 
@@ -147,10 +148,8 @@ TIPOS = ['Olimpíada','Competição']
 ESCOPO = ['Brasileira de', 'Internacional de']
 TEMAS = ['Matemática','Conhecimentos Gerais','Informática']
 TEMAS_TO_MATERIA = [[1,4],[0,2,3],[5]] # id das materias que caem na prova
-NIVEIS = ['Básica','Avançada']
 
-
-# temos 24 possiveis provas
+# temos 12 possiveis provas
 
 def repetido(cpf,lista,id_prova):
     for elem in lista:
@@ -177,12 +176,12 @@ def gerar_provas(questoes,pessoas,pessoas_por_prova=3):
     realiza = []
     responde = []
     
-    listas = [TIPOS,ESCOPO,TEMAS,NIVEIS]
+    listas = [TIPOS,ESCOPO,TEMAS,["",""]]
     todos_nomes = [' '.join(elem) for elem in list(product(*listas))]
 
     for id_prova in range(len(todos_nomes)):
         nome = todos_nomes[id_prova]
-        nivel = 'Básica' if 'Básica' in nome else 'Avançada'
+        nivel = randint(1,24)
         provas.append((id_prova,nome,nivel))
 
         tema = 0
@@ -227,7 +226,7 @@ def generate_database():
 
     escolas.extend(faculdades)
 
-    pessoas = gerar_pessoas(4,faculdades)
+    pessoas = gerar_pessoas(20,faculdades)
 
     materias,questoes = gerar_questoes_materia(pessoas)
 
@@ -244,7 +243,7 @@ def generate_database():
     'CREATE TABLE Universidade (cnpj INT NOT NULL, nome VARCHAR(30) NOT NULL, ranking INT, PRIMARY KEY (cnpj), FOREIGN KEY (cnpj) REFERENCES InstituicaoAcademica(cnpj));',
     'CREATE TABLE Questao (id INT NOT NULL, enunciado VARCHAR(1000) NOT NULL, gabarito VARCHAR(1000) NOT NULL, cpf INT, PRIMARY KEY (id), FOREIGN KEY (cpf) REFERENCES Pessoa(cpf));',
     'CREATE TABLE Materia (id INT NOT NULL, nome VARCHAR(30), area_conhecimento VARCHAR(30), PRIMARY KEY (id));',
-    'CREATE TABLE Prova (id INT NOT NULL, nome VARCHAR(30), nivel VARCHAR(30), PRIMARY KEY (id));',
+    'CREATE TABLE Prova (id INT NOT NULL, nome VARCHAR(30), nivel INT, PRIMARY KEY (id));',
     'CREATE TABLE Realiza (cpf INT NOT NULL, id_prova INT NOT NULL, n_inscricao INT, PRIMARY KEY (cpf, id_prova), FOREIGN KEY (cpf) REFERENCES Pessoa(cpf), FOREIGN KEY (id_prova) REFERENCES Prova(id));',
     'CREATE TABLE Responde (cpf INT NOT NULL, id_questao INT NOT NULL, resposta VARCHAR(1000), PRIMARY KEY (cpf, id_questao), FOREIGN KEY (cpf) REFERENCES Pessoa(cpf), FOREIGN KEY (id_questao) REFERENCES Questao(id));',
     'CREATE TABLE Compoe (id_prova INT NOT NULL, id_questao INT NOT NULL, n_questao INT, PRIMARY KEY (id_prova, id_questao), FOREIGN KEY (id_prova) REFERENCES Prova(id), FOREIGN KEY (id_questao) REFERENCES Questao(id));',
@@ -280,7 +279,7 @@ def generate_database():
 
     # Prova
     for (id, nome, nivel) in provas:
-        setup_commands.append(f"INSERT INTO Prova VALUES ({id},'{nome}','{nivel}');")
+        setup_commands.append(f"INSERT INTO Prova VALUES ({id},'{nome}',{nivel});")
 
     # Realiza
     for (id_prova,cpf_realizador,inscricao) in realiza:
