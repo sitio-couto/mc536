@@ -2,6 +2,12 @@ from importlib import import_module
 from tabulate import tabulate
 import sqlite3 as sql
 
+# FUNCTION:
+#   main - Process all input from user
+# PARAMETERS: 
+#   None
+# RETUNRS: 
+#   None
 def main():
     # Connect to database and retrieve cursor
     conn = sql.connect('database.db')
@@ -29,9 +35,9 @@ def main():
         # if first char in input isnt a number, read input as a sql query
         elif request and (not request[0].isdigit()):
             result = c.execute(request)
-            # Print resulting table on terminal
             print(decorate_table(result))
-        else:
+        # If not empty and is a number (predefined option)
+        elif request:
             option = request[0]
             param  = request[2:]
 
