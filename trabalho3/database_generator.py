@@ -35,8 +35,9 @@ def gerar_combinacoes_questoes(listas,materia,pessoas):
 
 ### Geradores
 PEOPLE_NAMES = ['José','Joselito','Joana','Josefina','Raimundo','Raimunda','Picasso','Donatello','Michelangelo','Marco'
-                ,'Reiner','Ricardo','Carmel','Shimbalaie','Torbjorn','Angela'] # precisamos de 20 nomes
-PEOPLE_SURNAMES = ['da Silva','Silva','Souza','Couto','do Nascimento','Tavares','Steinberg','Camarões','de Castro','Olaf']  # e de 20 sobrenomes
+                ,'Reiner','Ricardo','Carmel','Shimbalaie','Torbjorn','Angela','Ana','Maria','Julia','Fabiana'] # precisamos de 20 nomes
+PEOPLE_SURNAMES = ['da Silva','Silva','Souza','Couto','do Nascimento','Tavares','Steinberg','Camarões','de Castro','Olaf',
+                    'Matos','Amorim','Galvão','Lacerda','Pereira','Rubira','Salles','Brito','Chaves','Espindola']  # e de 20 sobrenomes
 EMAIL_PROVIDERS = ['gmail','hotmail','yahoo','outlook']
 EMAIL_CONNECTORS = ['','.','-','_']
 
@@ -68,7 +69,8 @@ def gerar_pessoas(quantidade,cnpjs):
 TIPO_INSTITUICAO_SUPERIOR = ['Faculdade','Universidade']
 TIPO_INSTITUICAO_ESCOLA = ['Escola','Colégio']
 TIPO_INSTITUICAO = ['Estadual','Federal']
-LOCAIS_INSTITUICAO = ['de São Paulo','da Bahia','de Brasilia','do Mato Grosso']
+LOCAIS_INSTITUICAO = ['de São Paulo','da Bahia','de Brasilia','do Mato Grosso','do Acre','do Distrito Federal','de Rondônia','de Manaus',
+                        'da Paraíba','de Belém','de Santa Catarina','do Piauí','de Fortaleza','de Roraima','do Amapá','de Curitiba']
 
 '''
 Retorna lista de instituicoes = (cnpj,nome,rank)
@@ -92,7 +94,9 @@ def gerar_instituicao_academica(number,escola=True):
 
 
 
-MATERIAS = ['História','Cálculo','Geografia','Arte','Matemática','Informática']
+MATERIAS = ['História','Cálculo','Geografia','Arte','Matemática',
+            'Informática','Literatura','Biologia']
+AREAS = ["Humanas","Exatas","Humanas","Humanas","Exatas","Exatas","Humanas","Biológicas"]
 
 # Historia - 3
 P_HISTORIA1 = ['Como começou']
@@ -102,9 +106,9 @@ P_CALCULO1 = ['Qual é a']
 P_CALCULO2 = ['integral','derivada']
 P_CALCULO3 = ['de x','de 1/x','de 12e^6']
 
-# 'Geografia' - 6
+# 'Geografia' - 8
 P_GEOGRAFIA1 = ['Qual é a capital do/da','Em qual continente fica o/a']
-P_GEOGRAFIA2 = ['Itália','estado do Rio Grande do Sul','China']
+P_GEOGRAFIA2 = ['Itália','estado do Rio Grande do Sul','China','Suriname']
 # Arte - 6
 P_ARTE1 = ['Cite uma obra do famosa movimento','Aonde começou o movimento']
 P_ARTE2 = ['Renascentista','Barroco','da Arte Moderna']
@@ -117,7 +121,15 @@ P_MATEMATICA2 = ['+','-','/','*','^']
 P_INFORMATICA1 = ['O que é','Como implementar','Como fazer uma busca em']
 P_INFORMATICA2 = ['um grafo','uma hashtable','uma lista ligada']
 
-# Temos atualmente 35 perguntas
+# Literatura - 8
+P_LITERATURA1 = ['Qual é o autor do livro','Qual são os personagens principais do livro']
+P_LITERATURA2 = ['Dom Casmurro','Capitães de Areia','O Cortiço','Vidas Secas']
+
+# Biologia - 6
+P_BIOLOGIA1 = ['Qual é o habitat dos/das','Do que se alimentam os/as']
+P_BIOLOGIA2 = ['Coelhos','Morcegos','Baratas']
+
+# Temos atualmente 51 perguntas
 
 '''
 Retorna tupla (materias, questoes)
@@ -126,8 +138,7 @@ Retorna tupla (materias, questoes)
     O id da questão deve ser considerado como o indice dela na lista
 '''
 def gerar_questoes_materia(pessoas):
-    areas = ["Humanas","Exatas","Humanas","Humanas","Exatas","Exatas"]
-    materias = [(i,MATERIAS[i],areas[i]) for i in range(len(MATERIAS))]
+    materias = [(i,MATERIAS[i],AREAS[i]) for i in range(len(MATERIAS))]
     questoes = []
 
     questoes.extend(gerar_combinacoes_questoes([P_HISTORIA1,P_HISTORIA2],0,pessoas))
@@ -135,6 +146,8 @@ def gerar_questoes_materia(pessoas):
     questoes.extend(gerar_combinacoes_questoes([P_GEOGRAFIA1,P_GEOGRAFIA2],2,pessoas))
     questoes.extend(gerar_combinacoes_questoes([P_ARTE1,P_ARTE2],3,pessoas))
     questoes.extend(gerar_combinacoes_questoes([P_INFORMATICA1,P_INFORMATICA2],5,pessoas))
+    questoes.extend(gerar_combinacoes_questoes([P_LITERATURA1,P_LITERATURA2],6,pessoas))
+    questoes.extend(gerar_combinacoes_questoes([P_BIOLOGIA1,P_BIOLOGIA2],7,pessoas))
 
     for i in range(len(P_MATEMATICA2)):
         a = randint(0,1000)
@@ -145,11 +158,12 @@ def gerar_questoes_materia(pessoas):
 
 
 TIPOS = ['Olimpíada','Competição']
-ESCOPO = ['Brasileira de', 'Internacional de']
-TEMAS = ['Matemática','Conhecimentos Gerais','Informática']
-TEMAS_TO_MATERIA = [[1,4],[0,2,3],[5]] # id das materias que caem na prova
+ESCOPO = ['Brasileira', 'Internacional']
+TEMAS = ['de Matemática','de Conhecimentos Gerais','de Informática','de Literatura','do Ensino Médio'
+        'do Ensino Técnico','de Biologia']
+TEMAS_TO_MATERIA = [[1,4],[0,2,3,6,7],[5],[6],[0,2,3,4,6,7],[0,2,3,4,5,6,7],[7]] # id das materias que caem na prova
 
-# temos 12 possiveis provas
+# temos 24 possiveis provas
 
 def repetido(cpf,lista,id_prova):
     for elem in lista:
@@ -170,7 +184,7 @@ Retorna tupla (provas,composta,realiza,responde)
     realiza é uma lista de (id_prova,cpf_realizador,inscricao)
     responde é uma lista de (cpf_realizador,id_questao,resposta)
 '''
-def gerar_provas(questoes,pessoas,pessoas_por_prova=3):
+def gerar_provas(questoes,pessoas,pessoas_por_prova=10):
     provas = []
     composta = []
     realiza = []
@@ -226,7 +240,7 @@ def generate_database():
 
     escolas.extend(faculdades)
 
-    pessoas = gerar_pessoas(20,faculdades)
+    pessoas = gerar_pessoas(400,faculdades)
 
     materias,questoes = gerar_questoes_materia(pessoas)
 
