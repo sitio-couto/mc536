@@ -33,6 +33,16 @@ def main():
                 print(sql_command)
                 c.execute(sql_command)
             conn.commit() 
+        # Count all records in the databas (size etimate)
+        elif (request.lower() == 'size'):
+            count = 0
+            query = "SELECT name FROM sqlite_master WHERE type='table'"
+            for i in list(c.execute(query)):
+                for qnt in c.execute(f"SELECT COUNT(*) FROM {i[0]};"):
+                    count += qnt[0]
+                    print(i[0], "posui", qnt[0], "registros.")
+            print("----------------------------")
+            print(f"TOTAL DE REGISTROS: {count}")
         # if first char in input isnt a number, read input as a sql query
         elif request and (not request[0].isdigit()):
             result = c.execute(request)
