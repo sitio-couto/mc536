@@ -35,14 +35,7 @@ def main():
             conn.commit() 
         # Count all records in the databas (size etimate)
         elif (request.lower() == 'size'):
-            count = 0
-            query = "SELECT name FROM sqlite_master WHERE type='table'"
-            for i in list(c.execute(query)):
-                for qnt in c.execute(f"SELECT COUNT(*) FROM {i[0]};"):
-                    count += qnt[0]
-                    print(i[0], "posui", qnt[0], "registros.")
-            print("----------------------------")
-            print(f"TOTAL DE REGISTROS: {count}")
+            show_database_size(c)
         # if first char in input isnt a number, read input as a sql query
         elif request and (not request[0].isdigit()):
             result = c.execute(request)
@@ -124,6 +117,21 @@ def decorate_table(result):
     print("---------------------------------------------")
     return tabulate(values,headers=header,tablefmt=looks,stralign=align,numalign=align)
 
+# FUNCTION:
+#   show_database_size - calculates total of entries for each table and its sum
+# PARAMETERS: 
+#   c - SQLite3 cursor object use to access database info
+def show_database_size(c):
+    print("----------------------------")
+    count = 0
+    query = "SELECT name FROM sqlite_master WHERE type='table'"
+    for i in list(c.execute(query)):
+        for qnt in c.execute(f"SELECT COUNT(*) FROM {i[0]};"):
+            count += qnt[0]
+            print(i[0], "possui", qnt[0], "registros.")
+    print("----------------------------")
+    print(f"TOTAL DE REGISTROS: {count}")
+    return
 
 def show_options():
     options = [ "1 - Listar Alunos(nome, cpf, email) de uma instituição?",
