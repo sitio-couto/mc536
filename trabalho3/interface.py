@@ -20,7 +20,7 @@ def main():
         request = input().strip()
 
         # Exit the python interface
-        if (request.lower() == 'exit'):
+        if (request.lower() in ['exit', 'quit', 'q', 'sair']):
             conn.commit() # Write changes to database
             conn.close()  # Close connection to database
             break
@@ -33,7 +33,7 @@ def main():
                 print(sql_command)
                 c.execute(sql_command)
             conn.commit() 
-        # Count all records in the databas (size etimate)
+        # Count all records in the database (size etimate)
         elif (request.lower() == 'size'):
             show_database_size(c)
         # if first char in input isnt a number, read input as a sql query
@@ -134,12 +134,12 @@ def show_database_size(c):
     return
 
 def show_options():
-    options = [ "1 - Listar Alunos(nome, cpf, email) de uma instituição?",
-                "2 - Listar Id das questões de uma matéria?",
-                "3 - Listar questões de uma prova?",
-                "4 - Listar os CPFs dos candidatos que fizeram uma prova e pertencem a uma Instituição?",
-                "5 - Listar as provas que pertencem á algum nível?",
-                "Escolhar uma das opçoes acima ou digite uma query em SQL.",
+    options = [ "1 - Listar alunos (nome, CPF, email) de uma Instituição Acadêmica",
+                "2 - Listar IDs das questões de uma matéria",
+                "3 - Listar questões de uma prova",
+                "4 - Listar CPFs dos candidatos que fizeram uma prova e pertencem a uma Instituição Acadêmica",
+                "5 - Listar provas dado um nível de dificuldade",
+                "Escolha uma das opções acima ou digite uma query SQL:",
                 "---------------------------------------------"
               ]
     for i in options : print(i)
