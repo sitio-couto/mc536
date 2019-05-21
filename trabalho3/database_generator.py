@@ -202,12 +202,12 @@ def gerar_provas(questoes,pessoas,pessoas_por_prova=10):
         while tema < len(TEMAS)-1 and TEMAS[tema] not in nome:
             tema += 1
         questoes_escolhidas = []
-        for _ in range(5):
+        for n_quest in range(1, 6):
             id_questao = randint(0,len(questoes)-1)
             while (id_prova,id_questao) in questoes_escolhidas or \
                  questoes[id_questao][2] not in TEMAS_TO_MATERIA[tema]:
                 id_questao = randint(0,len(questoes)-1)
-            questoes_escolhidas.append((id_prova,id_questao))
+            questoes_escolhidas.append((n_quest, id_prova,id_questao))
         composta.extend(questoes_escolhidas)
 
         for _ in range(pessoas_por_prova):
@@ -304,8 +304,7 @@ def generate_database():
         setup_commands.append(f"INSERT INTO Responde VALUES ({cpf_realizador},{id_questao},'{resposta}');")
 
     # Compoe
-    for (n_questao, x) in enumerate(compoe):
-        (id_prova,id_questão) = x
+    for (n_questao, id_prova, id_questão) in compoe:
         setup_commands.append(f"INSERT INTO Compoe VALUES ('{id_prova}','{id_questão}',{n_questao});")
 
     # Aborda
