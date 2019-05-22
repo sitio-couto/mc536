@@ -38,16 +38,23 @@ def main():
             show_database_size(c)
         # if first char in input isnt a number, read input as a sql query
         elif request and (not request[0].isdigit()):
-            result = c.execute(request)
-            if result.description: # Checks if there's a resulting table to print
-                print(decorate_table(result))
+            try: 
+                result = c.execute(request)
+                if result.description: # Checks if there's a resulting table to print
+                    print(decorate_table(result))
+            except: 
+                print("---------------------------------------------")
+                print("Query inválida! Corrigir sintaxe.")
         # If not empty and is a number (predefined option)
         elif request:
-            option = request[0]
-            param  = request[2:]
+            request = request.split(" ",1)
+            print(request)
+            option = request.pop(0)
+            if request: param = request[0]
+            else: param = ""
 
             # Get (cpf,name,email) from every person from {param} academic institution
-            if option=='1':
+            if option=='1' and param:
                 result = c.execute(f"SELECT p.cpf, p.nome, p.email \
             	                    FROM InstituicaoAcademica AS ia \
                                     INNER JOIN Pessoa AS p \
@@ -55,20 +62,20 @@ def main():
                                     WHERE ia.nome = '{param}';"
                                     )
             # Get (id) of every question from the subject with id=={param}
-            elif option=='2':
+            elif option=='2' and param:
                 result = c.execute(f"SELECT id_questao \
             	                    FROM Aborda \
                                     WHERE id_materia = {param};"
                                     )
             # Lists the questions descriptions for every question from the test with id=={param}
-            elif option=='3':
+            elif option=='3' and param:
                 result = c.execute(f"SELECT Questao.enunciado \
             	                    FROM Questao INNER JOIN Compoe \
                                     ON Questao.id = Compoe.id_questao \
                                     WHERE Compoe.id_prova = {param};"
                                     )
             # Lists (cpf) from all candidates whom took a test {param[0]} and is part of a certain institution {param[1]}
-            elif option=='4':
+            elif option=='4' and param:
                 param = param.split(' ',1)
                 param[1] = param[1].strip()
                 
@@ -80,7 +87,7 @@ def main():
                                     ON r.id_prova = {param[0]} AND p.cpf = r.cpf;"
                                     )
             # Get all testes from a certain difficulty {param} and above
-            elif option=='5':
+            elif option=='5' and param:
                 # TODO: The option should list all difficulties equal or 
                 # superior to PARAM. Since the difficulty is given in strgins,
                 # i changed the query to select onlt difficulties from PARAM level.
@@ -90,10 +97,16 @@ def main():
                                     )
             # In case the number is no any of the options, labels as invalid
             else:
-                print("Opção inválida!")
+                if option not in '1,2,3,4,5':
+                    print("Opção inválida!")
+                elif not param:
+                    print("Falta argumentos para a opção desejada.")    
+                else:
+                    print("Erro desconhecido.")
+
                 print("=============================================")
                 continue
-
+            
             # Print resulting table in the terminal
             print(decorate_table(result))
 
