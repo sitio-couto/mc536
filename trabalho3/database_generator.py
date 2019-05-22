@@ -240,7 +240,7 @@ def generate_database():
 
     escolas.extend(faculdades)
 
-    pessoas = gerar_pessoas(400,faculdades)
+    pessoas = gerar_pessoas(400,escolas)
 
     materias,questoes = gerar_questoes_materia(pessoas)
 
@@ -306,7 +306,7 @@ def generate_database():
     # Compoe
     for (n_questao, x) in enumerate(compoe):
         (id_prova,id_questão) = x
-        setup_commands.append(f"INSERT INTO Compoe VALUES ('{id_prova}','{id_questão}',{n_questao});")
+        setup_commands.append(f"INSERT INTO Compoe VALUES ('{id_prova}','{id_questão}',{n_questao%5+1});")
 
     # Aborda
     for (id_questao,x) in enumerate(questoes):
