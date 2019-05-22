@@ -48,7 +48,6 @@ def main():
         # If not empty and is a number (predefined option)
         elif request:
             request = request.split(" ",1)
-            print(request)
             option = request.pop(0)
             if request: param = request[0]
             else: param = ""
