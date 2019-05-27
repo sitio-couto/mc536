@@ -111,6 +111,7 @@ def main():
 
         # Print double line to split queries requests
         print("=============================================")
+        show_options()
 
 # FUNCTION:
 #   decorate_table - formats queries result into table
