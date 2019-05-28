@@ -98,7 +98,7 @@ def main():
                 # i changed the query to select onlt difficulties from PARAM level.
                 result = c.execute(f"SELECT * \
             	                    FROM Prova \
-                                    WHERE Prova.nivel = '{param}';"
+                                    WHERE Prova.nivel >= '{param}';"
                                     )
             # In case the number is no any of the options, labels as invalid
             else:
