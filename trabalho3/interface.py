@@ -1,6 +1,7 @@
 from importlib import import_module
 from tabulate import tabulate
 import sqlite3 as sql
+import optparse
 
 # FUNCTION:
 #   main - Process all input from user
@@ -12,7 +13,12 @@ def main():
     # Connect to database and retrieve cursor
     conn = sql.connect('database.db')
     c = conn.cursor()
-    show_options()
+
+    parser = optparse.OptionParser()
+    parser.add_option('-v', '--verbose', dest='show_params', action='store_true')
+    show_params = parser.parse_args()[0].show_params # True if '-v' is used and None otherwise
+
+    show_options(show_params)
 
     # Loop trough requests until exit case
     while(True):
@@ -111,7 +117,7 @@ def main():
 
         # Print double line to split queries requests
         print("=============================================")
-        show_options()
+        show_options(show_params)
 
 # FUNCTION:
 #   decorate_table - formats queries result into table
@@ -146,8 +152,8 @@ def show_database_size(c):
     print(f"TOTAL DE REGISTROS: {count}")
     return
 
-def show_options():
-    options = [ "1 - Listar alunos (nome, CPF, email) de uma Instituição Acadêmica",
+def show_options(show_params=False):
+    options = [ "1 - Listar alunos (CPF, nome, email) de uma Instituição Acadêmica",
                 "2 - Listar IDs das questões de uma matéria",
                 "3 - Listar questões de uma prova",
                 "4 - Listar CPFs dos candidatos que fizeram uma prova e pertencem a uma Instituição Acadêmica",
@@ -155,6 +161,12 @@ def show_options():
                 "Escolha uma das opções acima ou digite uma query SQL:",
                 "---------------------------------------------"
               ]
+    if show_params:
+        options[0] += "\n    1 <nome da  instituição>"
+        options[1] += "\n    2 <id da matéria>"
+        options[2] += "\n    3 <id da prova>"
+        options[3] += "\n    4 <id da prova> <nome da  instituição>"
+        options[4] += "\n    5 <nível  de  dificuldade>"
     for i in options : print(i)
     return
 
